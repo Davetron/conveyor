@@ -1,6 +1,8 @@
 
 package co.databeast.conveyor;
 
+import co.databeast.conveyor.task.Task;
+import co.databeast.conveyor.task.TaskFailureException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +24,14 @@ public class Job {
 
     public void start() {
         log.info("starting {} job", name);
-        tasks.forEach(Task::start);
+        Object result = null;
+        for (Task task : tasks) {
+            try {
+                result = task.run(result);
+            } catch (TaskFailureException taskFailureException) {
+                log.error("Uh oh, task failure alert!", taskFailureException);
+            }
+        }
     }
 
     public static Job job(String name, Task... tasks) {
