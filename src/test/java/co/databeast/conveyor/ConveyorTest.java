@@ -7,6 +7,7 @@ import static co.databeast.conveyor.task.DummyTask.dummyTask;
 import static co.databeast.conveyor.Job.job;
 import static co.databeast.conveyor.Stage.stage;
 import static co.databeast.conveyor.task.GitTask.gitCheckout;
+import static co.databeast.conveyor.task.MavenTask.maven;
 
 public class ConveyorTest {
 
@@ -17,7 +18,8 @@ public class ConveyorTest {
                 stage("Build",
                         job("Job 1",
                                 dummyTask("task 1"),
-                                gitCheckout("https://github.com/Davetron/conveyor.git")
+                                gitCheckout("https://github.com/Davetron/conveyor.git"),
+                                maven("clean install")
                         )
                 )
         ).start();
