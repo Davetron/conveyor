@@ -1,19 +1,18 @@
 package co.databeast.conveyor;
 
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
-@Builder
 @Slf4j
 public class Task {
 
-    private String name;
+    private final String name;
 
-    private 
+    public Task(String name) {
+        this.name = name;
+    }
 
     public void start() {
-        log.info("starting {} task", name);
-        tasks.forEach(Task::start);
+        log.info("starting Task {}", name);
     }
 
 }

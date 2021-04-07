@@ -1,22 +1,27 @@
 package co.databeast.conveyor;
 
-import lombok.Builder;
-import lombok.Singular;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Builder
 @Slf4j
 public class Stage {
 
-    private String name;
+    private final String name;
+    private final List<Job> jobs = new ArrayList<>();
 
-    @Singular
-    private List<Job> jobs;
+    public Stage(String name) {
+        this.name = name;
+    }
+
+    public Stage job(Job job) {
+        jobs.add(job);
+        return this;
+    }
 
     public void start() {
-        log.info("starting {} stage", name);
+        log.info("starting Stage {}", name);
         jobs.forEach(Job::start);
     }
 

@@ -1,27 +1,27 @@
 package co.databeast.conveyor;
 
-import lombok.Builder;
-import lombok.Singular;
+import lombok.extern.slf4j.Slf4j;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.ArrayList;
 import java.util.List;
 
-@Builder
+@Slf4j
 public class Conveyor {
 
-    private static Logger log = LoggerFactory.getLogger(Conveyor.class);
+    private final String name;
+    private final List<Stage> stages = new ArrayList<>();
 
-    // Give your pipeline a name
-    private String name;
+    public Conveyor(String name) {
+        this.name = name;
+    }
 
-    // Give it some jobs to do
-    @Singular
-    private List<Stage> stages;
+    public Conveyor stage(Stage stage) {
+        this.stages.add(stage);
+        return this;
+    }
 
     public void start() {
-        log.info("starting {} pipeline", name);
+        log.info("starting Conveyor {}", name);
         stages.forEach(Stage::start);
     }
 
