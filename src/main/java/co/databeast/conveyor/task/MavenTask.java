@@ -10,6 +10,7 @@ import java.io.File;
 @Slf4j
 public class MavenTask implements Task {
 
+    private MavenCli maven = new MavenCli();
     private final String command;
 
     @Override
@@ -18,15 +19,18 @@ public class MavenTask implements Task {
     }
 
     @Override
-    public Object run(Object input) throws TaskFailureException {
-        File file = (File) input;
-        String location = file.getAbsolutePath();
-        MavenCli maven = new MavenCli();
-        maven.doMain(new String[]{command}, location, System.out, System.out);
+    public Object start(Object input, File workspace) throws TaskFailureException {
+        String location = workspace.getAbsolutePath();
+        System.setProperty("maven.multiModuleProjectDirectory", location);
+        maven.doMain(tokeniseCommand(command), location, System.out, System.out);
         return null;
     }
 
     public static MavenTask maven(String command) {
         return new MavenTask(command);
+    }
+
+    private String[] tokeniseCommand(String command) {
+        return command.split("\\s+");
     }
 }

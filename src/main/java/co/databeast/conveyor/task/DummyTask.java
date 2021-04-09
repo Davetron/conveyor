@@ -3,6 +3,8 @@ package co.databeast.conveyor.task;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
+
 @Data
 @Slf4j
 public class DummyTask implements Task {
@@ -15,7 +17,7 @@ public class DummyTask implements Task {
     }
 
     @Override
-    public Object run(Object input) throws TaskFailureException {
+    public Object start(Object input, File workspace) throws TaskFailureException {
         log.info("Running dummy task");
         return null;
     }
