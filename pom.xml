@@ -54,12 +54,6 @@
             <version>3.8.1</version>
         </dependency>
 
-        <!--        <dependency>
-                    <groupId>org.jenkins-ci.lib</groupId>
-                    <artifactId>lib-jenkins-maven-embedder</artifactId>
-                    <version>3.12.1</version>
-                </dependency>-->
-
 
     </dependencies>
 

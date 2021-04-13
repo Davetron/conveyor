@@ -16,9 +16,9 @@ public class ConveyorTest {
 
         conveyor("Pipeline",
                 stage("Build",
-                        job("Job 1",
+                        job("Application Build",
                                 dummyTask("task 1"),
-                                gitCheckout("https://github.com/Davetron/conveyor.git"),
+                                gitCheckout("https://github.com/Davetron/sample_maven.git"),
                                 maven("clean install")
                         )
                 )

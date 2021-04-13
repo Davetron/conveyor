@@ -22,6 +22,7 @@ public class MavenTask implements Task {
     public Object start(Object input, File workspace) throws TaskFailureException {
         String location = workspace.getAbsolutePath();
         System.setProperty("maven.multiModuleProjectDirectory", location);
+
         maven.doMain(tokeniseCommand(command), location, System.out, System.out);
         return null;
     }
