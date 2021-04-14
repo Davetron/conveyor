@@ -1,4 +1,4 @@
-package co.databeast.conveyor.task;
+package co.databeast.conveyor.exceptions;
 
 public class TaskFailureException extends Exception {
 

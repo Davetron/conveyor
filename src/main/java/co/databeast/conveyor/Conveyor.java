@@ -1,5 +1,8 @@
 package co.databeast.conveyor;
 
+import co.databeast.conveyor.exceptions.StageFailureException;
+import co.databeast.conveyor.stage.DefaultStage;
+import co.databeast.conveyor.stage.Stage;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,7 +23,13 @@ public class Conveyor {
 
     public void start() {
         log.info("starting Conveyor {}", name);
-        stages.forEach(Stage::start);
+        for (Stage stage : stages) {
+            try {
+                stage.start();
+            } catch (StageFailureException e) {
+                log.error("Stage failure occurred", e);
+            }
+        }
     }
 
     public static void conveyor(String name, Stage... stages) {

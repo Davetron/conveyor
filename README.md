@@ -3,7 +3,7 @@ Define and execute pipelines as code
 
 ```java
 conveyor("Pipeline",
-  stage("Build",
+  defaultStage("Build",
     job("Job 1",
       dummyTask("task 1"),
       gitCheckout("https://github.com/Davetron/conveyor.git"),

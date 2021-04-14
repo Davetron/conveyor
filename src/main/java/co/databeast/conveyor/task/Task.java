@@ -1,5 +1,7 @@
 package co.databeast.conveyor.task;
 
+import co.databeast.conveyor.exceptions.TaskFailureException;
+
 import java.io.File;
 
 public interface Task {

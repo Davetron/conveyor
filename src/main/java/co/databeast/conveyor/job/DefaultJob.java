@@ -1,8 +1,9 @@
 
-package co.databeast.conveyor;
+package co.databeast.conveyor.job;
 
+import co.databeast.conveyor.exceptions.JobFailureException;
+import co.databeast.conveyor.exceptions.TaskFailureException;
 import co.databeast.conveyor.task.Task;
-import co.databeast.conveyor.task.TaskFailureException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,23 +16,28 @@ import java.util.List;
 
 @Data
 @Slf4j
-public class Job {
+public class DefaultJob implements Job{
 
     private final String name;
     private final List<Task> tasks = new ArrayList<>();
+
+    @Override
+    public String name() {
+        return null;
+    }
 
     public void addTask(Task task) {
         tasks.add(task);
     }
 
-    public void start() throws TaskFailureException {
+    public void start() throws JobFailureException {
         log.info("Starting {} job", name);
 
         File workspace;
         try {
             workspace = createWorkspace(name);
         } catch (IOException ioException) {
-            throw new TaskFailureException("IO Exception while creating local workspace", ioException);
+            throw new JobFailureException("IO Exception while creating local workspace", ioException);
         }
 
         try {
@@ -61,7 +67,7 @@ public class Job {
     }
 
     public static Job job(String name, Task... tasks) {
-        Job job = new Job(name);
+        Job job = new DefaultJob(name);
         Arrays.stream(tasks).forEach(job::addTask);
         return job;
     }

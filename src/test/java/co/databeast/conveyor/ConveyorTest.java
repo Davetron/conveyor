@@ -1,13 +1,16 @@
 package co.databeast.conveyor;
 
+import co.databeast.conveyor.job.DefaultJob;
+import co.databeast.conveyor.job.Job;
+import co.databeast.conveyor.stage.DefaultStage;
 import co.databeast.conveyor.task.GitCloneTask;
 import co.databeast.conveyor.task.MavenTask;
 import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.junit.Test;
 
 import static co.databeast.conveyor.Conveyor.conveyor;
-import static co.databeast.conveyor.Job.job;
-import static co.databeast.conveyor.Stage.stage;
+import static co.databeast.conveyor.job.DefaultJob.job;
+import static co.databeast.conveyor.stage.DefaultStage.stage;
 import static co.databeast.conveyor.task.DummyTask.dummyTask;
 import static co.databeast.conveyor.task.GitCloneTask.gitClone;
 import static co.databeast.conveyor.task.MavenTask.maven;
@@ -49,12 +52,12 @@ public class ConveyorTest {
     @Test
     public void fullFatTest() {
         Conveyor conveyor = new Conveyor("Full fat Pipeline");
-        Stage stage = new Stage("Full fat Build");
-        Job job = new Job("Full fat Application build");
+        DefaultStage defaultStage = new DefaultStage("Full fat Build");
+        Job job = new DefaultJob("Full fat Application build");
         job.addTask(new GitCloneTask(REPOSITORY_URI, "HEAD"));
         job.addTask(new MavenTask("clean install"));
-        stage.addJob(job);
-        conveyor.addStage(stage);
+        defaultStage.addJob(job);
+        conveyor.addStage(defaultStage);
         conveyor.start();
     }
 
