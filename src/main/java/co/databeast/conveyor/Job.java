@@ -20,9 +20,8 @@ public class Job {
     private final String name;
     private final List<Task> tasks = new ArrayList<>();
 
-    public Job task(Task task) {
+    public void addTask(Task task) {
         tasks.add(task);
-        return this;
     }
 
     public void start() throws TaskFailureException {
@@ -63,8 +62,7 @@ public class Job {
 
     public static Job job(String name, Task... tasks) {
         Job job = new Job(name);
-        Arrays.stream(tasks)
-              .forEach(job::task);
+        Arrays.stream(tasks).forEach(job::addTask);
         return job;
     }
 }

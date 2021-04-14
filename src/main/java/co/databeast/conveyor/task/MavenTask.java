@@ -22,8 +22,10 @@ public class MavenTask implements Task {
     public Object start(Object input, File workspace) throws TaskFailureException {
         String location = workspace.getAbsolutePath();
         System.setProperty("maven.multiModuleProjectDirectory", location);
-
-        maven.doMain(tokeniseCommand(command), location, System.out, System.out);
+        int result = maven.doMain(tokenizeCommand(command), location, System.out, System.out);
+        if (result != 0) {
+            throw new TaskFailureException("Maven execution failed with exit code " + result);
+        }
         return null;
     }
 
@@ -31,7 +33,8 @@ public class MavenTask implements Task {
         return new MavenTask(command);
     }
 
-    private String[] tokeniseCommand(String command) {
+    private String[] tokenizeCommand(String command) {
         return command.split("\\s+");
     }
+
 }

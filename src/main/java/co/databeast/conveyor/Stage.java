@@ -15,9 +15,8 @@ public class Stage {
     private final String name;
     private final List<Job> jobs = new ArrayList<>();
 
-    public Stage job(Job job) {
+    public void addJob(Job job) {
         jobs.add(job);
-        return this;
     }
 
     public void start() {
@@ -33,7 +32,7 @@ public class Stage {
 
     public static Stage stage(String name, Job... jobs) {
         Stage stage = new Stage(name);
-        Arrays.stream(jobs).forEach(job -> stage.job(job));
+        Arrays.stream(jobs).forEach(stage::addJob);
         return stage;
     }
 
