@@ -19,6 +19,7 @@ import java.util.List;
 public class DefaultJob implements Job{
 
     private final String name;
+    private String buildIdentifier;
     private final List<Task> tasks = new ArrayList<>();
 
     @Override
@@ -30,12 +31,13 @@ public class DefaultJob implements Job{
         tasks.add(task);
     }
 
-    public void start() throws JobFailureException {
-        log.info("Starting {} job", name);
+    public void start(String buildIdentifier) throws JobFailureException {
+        log.info("Starting {} job ({})", name, buildIdentifier);
+        this.buildIdentifier = buildIdentifier;
 
         File workspace;
         try {
-            workspace = createWorkspace(name);
+            workspace = createWorkspace(buildIdentifier, name);
         } catch (IOException ioException) {
             throw new JobFailureException("IO Exception while creating local workspace", ioException);
         }
@@ -48,18 +50,16 @@ public class DefaultJob implements Job{
         }
     }
 
-    private File createWorkspace(String jobName) throws IOException {
-        File workspace = File.createTempFile("conveyor_job_" + jobName, "");
-        Files.delete(workspace.toPath());
+    private File createWorkspace(String buildIdentifier, String jobName) throws IOException {
+        File workspace = Files.createTempDirectory(buildIdentifier + "_" + jobName).toFile();
         log.debug("Created job workspace {}", workspace);
         return workspace;
     }
 
     private void runTasks(File workspace) {
-        Object result = null;
         for (Task task : tasks) {
             try {
-                result = task.start(result, workspace);
+                task.start(buildIdentifier, workspace);
             } catch (TaskFailureException taskFailureException) {
                 log.error("Uh oh, task failure!", taskFailureException);
             }

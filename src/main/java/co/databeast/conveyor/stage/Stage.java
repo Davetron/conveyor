@@ -9,7 +9,7 @@ public interface Stage {
 
     void addJob(Job job);
 
-    default void start() throws StageFailureException {
+    default void start(String buildIdentifier) throws StageFailureException {
         System.out.println("Running an empty Stage!");
     }
 

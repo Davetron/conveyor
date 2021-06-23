@@ -24,10 +24,8 @@ public class ConveyorTest {
         conveyor("Pipeline",
                 stage("Build",
                         job("Application Build",
-                                dummyTask("task 1"),
                                 gitClone(REPOSITORY_URI),
-                                maven("clean install"),
-                                dummyTask("upload build to artifactory")
+                                maven("clean deploy")
                         ),
                         job("Configuration packaging",
                                 dummyTask("get config"),
@@ -46,7 +44,9 @@ public class ConveyorTest {
                                 dummyTask("destroy Openstack instance")
                         )
                 )
-        );
+        ).start();
+
+
     }
 
     @Test
@@ -78,7 +78,7 @@ public class ConveyorTest {
                                 dummyTask("upload build to artifactory")
                         )
                 )
-        );
+        ).start();
 
     }
 

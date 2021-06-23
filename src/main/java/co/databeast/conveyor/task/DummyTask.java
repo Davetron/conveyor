@@ -18,7 +18,7 @@ public class DummyTask implements Task {
     }
 
     @Override
-    public Object start(Object input, File workspace) throws TaskFailureException {
+    public Object start(String buildIdentifier, File workspace) throws TaskFailureException {
         log.info("Running dummy task {}", name);
         return null;
     }

@@ -10,7 +10,7 @@ public interface Job {
 
     void addTask(Task task);
 
-    default void start() throws JobFailureException {
+    default void start(String buildIdentifier) throws JobFailureException {
         System.out.println("Running an empty job!");
     }
 }

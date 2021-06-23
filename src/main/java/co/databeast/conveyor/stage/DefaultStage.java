@@ -25,11 +25,11 @@ public class DefaultStage implements Stage {
         jobs.add(job);
     }
 
-    public void start() {
-        log.info("starting Stage {}", name);
+    public void start(String buildIdentifier) {
+        log.info("starting Stage {} for build {}", name, buildIdentifier);
         try {
             for (Job job : jobs) {
-                job.start();
+                job.start(buildIdentifier);
             }
         } catch (JobFailureException taskFailureException) {
             log.error("Uh oh, job failure!", taskFailureException);
