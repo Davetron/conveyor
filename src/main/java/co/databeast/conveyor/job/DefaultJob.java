@@ -1,6 +1,7 @@
 
 package co.databeast.conveyor.job;
 
+import co.databeast.conveyor.Manifest;
 import co.databeast.conveyor.exceptions.JobFailureException;
 import co.databeast.conveyor.exceptions.TaskFailureException;
 import co.databeast.conveyor.task.Task;
@@ -19,7 +20,6 @@ import java.util.List;
 public class DefaultJob implements Job{
 
     private final String name;
-    private String buildIdentifier;
     private final List<Task> tasks = new ArrayList<>();
 
     @Override
@@ -31,19 +31,18 @@ public class DefaultJob implements Job{
         tasks.add(task);
     }
 
-    public void start(String buildIdentifier) throws JobFailureException {
-        log.info("Starting {} job ({})", name, buildIdentifier);
-        this.buildIdentifier = buildIdentifier;
+    public void start(Manifest manifest) throws JobFailureException {
+        log.info("Starting {} job ({})", name, manifest.getBuildIdentifier());
 
         File workspace;
         try {
-            workspace = createWorkspace(buildIdentifier, name);
+            workspace = createWorkspace(manifest.getBuildIdentifier(), name);
         } catch (IOException ioException) {
             throw new JobFailureException("IO Exception while creating local workspace", ioException);
         }
 
         try {
-            runTasks(workspace);
+            runTasks(workspace, manifest);
         } finally {
             log.debug("Deleting workspace {}", workspace);
             workspace.deleteOnExit();
@@ -56,10 +55,10 @@ public class DefaultJob implements Job{
         return workspace;
     }
 
-    private void runTasks(File workspace) {
+    private void runTasks(File workspace, Manifest manifest) {
         for (Task task : tasks) {
             try {
-                task.start(buildIdentifier, workspace);
+                task.start(manifest, workspace);
             } catch (TaskFailureException taskFailureException) {
                 log.error("Uh oh, task failure!", taskFailureException);
             }

@@ -25,7 +25,7 @@ public class ConveyorTest {
                 stage("Build",
                         job("Application Build",
                                 gitClone(REPOSITORY_URI),
-                                maven("clean deploy")
+                                maven("install")
                         ),
                         job("Configuration packaging",
                                 dummyTask("get config"),

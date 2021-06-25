@@ -1,15 +1,22 @@
 package co.databeast.conveyor.task;
 
+import co.databeast.conveyor.Manifest;
 import co.databeast.conveyor.exceptions.TaskFailureException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.File;
+import java.io.IOException;
 
 import static java.lang.System.getenv;
 
@@ -37,13 +44,16 @@ public class GitCloneTask implements Task {
     }
 
     @Override
-    public Object start(String buildIdentifier, File workspace) throws TaskFailureException {
+    public Object start(Manifest manifest, File workspace) throws TaskFailureException {
+        Git git;
         try {
             log.info("Cloning {} ({} branch) into {}", repositoryURI, branch, workspace);
             cloneCommand.setDirectory(workspace);
-            return cloneCommand.call();
-        } catch (GitAPIException gitAPIException) {
-            throw new TaskFailureException("Git exception while checking out repository", gitAPIException);
+            git = cloneCommand.call();
+            manifest.getComponentVersions().put(repositoryURI, getCommitHash(git, branch));
+            return git;
+        } catch (GitAPIException | IOException exception) {
+            throw new TaskFailureException("Git exception while checking out repository", exception);
         }
     }
 
@@ -66,6 +76,14 @@ public class GitCloneTask implements Task {
             log.warn("No git credentials set");
             return null;
         }
+    }
+
+    private String getCommitHash(Git git, String ref) throws IOException {
+        Repository repository = git.getRepository();
+        Ref head = repository.exactRef(ref);
+        RevWalk walk = new RevWalk(repository);
+        RevCommit commit = walk.parseCommit(head.getObjectId());
+        return commit.getId().getName();
     }
 
 }

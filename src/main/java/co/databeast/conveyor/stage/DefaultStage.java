@@ -1,5 +1,6 @@
 package co.databeast.conveyor.stage;
 
+import co.databeast.conveyor.Manifest;
 import co.databeast.conveyor.exceptions.JobFailureException;
 import co.databeast.conveyor.job.Job;
 import lombok.Data;
@@ -25,11 +26,11 @@ public class DefaultStage implements Stage {
         jobs.add(job);
     }
 
-    public void start(String buildIdentifier) {
-        log.info("starting Stage {} for build {}", name, buildIdentifier);
+    public void start(Manifest manifest) {
+        log.info("starting Stage {} for build {}", name, manifest);
         try {
             for (Job job : jobs) {
-                job.start(buildIdentifier);
+                job.start(manifest);
             }
         } catch (JobFailureException taskFailureException) {
             log.error("Uh oh, job failure!", taskFailureException);

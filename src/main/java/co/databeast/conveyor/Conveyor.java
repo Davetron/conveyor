@@ -4,12 +4,10 @@ import co.databeast.conveyor.exceptions.StageFailureException;
 import co.databeast.conveyor.stage.Stage;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Slf4j
@@ -26,14 +24,14 @@ public class Conveyor {
         this.start(null);
     }
 
-    public void start(String buildIdentifier) {
-        if (StringUtils.isEmpty(buildIdentifier)) {
-            buildIdentifier = UUID.randomUUID().toString();
+    public void start(Manifest manifest) {
+        if (manifest == null) {
+            manifest = new Manifest();
         }
-        log.info("starting Conveyor {} ({})", name, buildIdentifier);
+        log.info("starting Conveyor {} ({})", name, manifest);
         for (Stage stage : stages) {
             try {
-                stage.start(buildIdentifier);
+                stage.start(manifest);
             } catch (StageFailureException e) {
                 log.error("Stage failure occurred", e);
             }
