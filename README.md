@@ -5,8 +5,7 @@ Define and execute pipelines as code
 conveyor("Pipeline",
   defaultStage("Build",
     job("Job 1",
-      dummyTask("task 1"),
-      gitCheckout("https://github.com/Davetron/conveyor.git"),
+      gitClone("https://github.com/Davetron/conveyor.git"),
       maven("clean install")
     )
   )

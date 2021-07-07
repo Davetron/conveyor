@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -51,6 +50,7 @@ public class GitCloneTask implements Task {
             cloneCommand.setDirectory(workspace);
             git = cloneCommand.call();
             manifest.getComponentVersions().put(repositoryURI, getCommitHash(git, branch));
+            git.close();
             return git;
         } catch (GitAPIException | IOException exception) {
             throw new TaskFailureException("Git exception while checking out repository", exception);

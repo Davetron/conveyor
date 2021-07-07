@@ -7,6 +7,7 @@ import co.databeast.conveyor.exceptions.TaskFailureException;
 import co.databeast.conveyor.task.Task;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,9 +16,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.System.getProperty;
+
 @Data
 @Slf4j
-public class DefaultJob implements Job{
+public class DefaultJob implements Job {
 
     private final String name;
     private final List<Task> tasks = new ArrayList<>();
@@ -41,16 +44,20 @@ public class DefaultJob implements Job{
             throw new JobFailureException("IO Exception while creating local workspace", ioException);
         }
 
-        try {
-            runTasks(workspace, manifest);
-        } finally {
+        runTasks(workspace, manifest);
+        if (getProperty("conveyor.workspace.preserve") == null) {
             log.debug("Deleting workspace {}", workspace);
-            workspace.deleteOnExit();
+            if (!FileUtils.deleteQuietly(workspace)) {
+                throw new JobFailureException("Unable to delete workspace");
+            }
+        } else {
+            log.debug("Preserving workspace {}", workspace);
         }
     }
 
     private File createWorkspace(String buildIdentifier, String jobName) throws IOException {
-        File workspace = Files.createTempDirectory(buildIdentifier + "_" + jobName).toFile();
+        File workspace = Files.createTempDirectory(buildIdentifier + "_" + jobName)
+                              .toFile();
         log.debug("Created job workspace {}", workspace);
         return workspace;
     }
@@ -67,7 +74,8 @@ public class DefaultJob implements Job{
 
     public static Job job(String name, Task... tasks) {
         Job job = new DefaultJob(name);
-        Arrays.stream(tasks).forEach(job::addTask);
+        Arrays.stream(tasks)
+              .forEach(job::addTask);
         return job;
     }
 }
