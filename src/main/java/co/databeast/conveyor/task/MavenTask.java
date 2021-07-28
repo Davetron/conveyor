@@ -5,12 +5,7 @@ import co.databeast.conveyor.exceptions.TaskFailureException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
 @Data
 @Slf4j
@@ -37,10 +32,7 @@ public class MavenTask implements Task {
                 builder.command("sh", "-c", "mvnw " + command);
             }
 
-            Process process = builder.start();
-            StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
-            Executors.newSingleThreadExecutor()
-                     .submit(streamGobbler);
+            Process process = builder.inheritIO().start();
             int exitCode = process.waitFor();
             assert exitCode == 0;
         } catch (Exception e) {
@@ -60,19 +52,4 @@ public class MavenTask implements Task {
                      .startsWith("windows");
     }
 
-    private static class StreamGobbler implements Runnable {
-        private final InputStream inputStream;
-        private final Consumer<String> consumer;
-
-        public StreamGobbler(InputStream inputStream, Consumer<String> consumer) {
-            this.inputStream = inputStream;
-            this.consumer = consumer;
-        }
-
-        @Override
-        public void run() {
-            new BufferedReader(new InputStreamReader(inputStream)).lines()
-                                                                  .forEach(consumer);
-        }
-    }
 }

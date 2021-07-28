@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.lang.System.getProperty;
+import static java.lang.System.getenv;
 
 @Data
 @Slf4j
@@ -45,10 +45,13 @@ public class DefaultJob implements Job {
         }
 
         runTasks(workspace, manifest);
-        if (getProperty("conveyor.workspace.preserve") == null) {
-            log.debug("Deleting workspace {}", workspace);
-            if (!FileUtils.deleteQuietly(workspace)) {
-                throw new JobFailureException("Unable to delete workspace");
+        if (getenv("conveyor.workspace.preserve") == null) {
+            try {
+                log.debug("Deleting workspace {}", workspace);
+                FileUtils.deleteDirectory(workspace);
+                log.debug("Completed deleting workspace {}", workspace);
+            } catch (IOException e) {
+                throw new JobFailureException("Unable to delete workspace", e);
             }
         } else {
             log.debug("Preserving workspace {}", workspace);

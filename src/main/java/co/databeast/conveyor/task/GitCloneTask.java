@@ -44,17 +44,16 @@ public class GitCloneTask implements Task {
 
     @Override
     public Object start(Manifest manifest, File workspace) throws TaskFailureException {
-        Git git;
         try {
             log.info("Cloning {} ({} branch) into {}", repositoryURI, branch, workspace);
             cloneCommand.setDirectory(workspace);
-            git = cloneCommand.call();
+            Git git = cloneCommand.call();
             manifest.getComponentVersions().put(repositoryURI, getCommitHash(git, branch));
             git.close();
-            return git;
         } catch (GitAPIException | IOException exception) {
             throw new TaskFailureException("Git exception while checking out repository", exception);
         }
+        return null;
     }
 
     public static GitCloneTask gitClone(String repositoryURI, String branch) {
@@ -74,7 +73,7 @@ public class GitCloneTask implements Task {
                     getenv("git.password"));
         } else {
             log.warn("No git credentials set");
-            return null;
+            return CredentialsProvider.getDefault();
         }
     }
 
