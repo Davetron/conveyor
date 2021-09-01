@@ -29,7 +29,7 @@ public class MavenTask implements Task {
             if (isWindows()) {
                 builder.command("cmd.exe", "/c", "mvnw.cmd " + command);
             } else {
-                builder.command("sh", "-c", "mvnw " + command);
+                builder.command("sh", "-c", "./mvnw " + command);
             }
 
             Process process = builder.inheritIO().start();

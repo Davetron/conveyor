@@ -45,7 +45,7 @@ public class DefaultJob implements Job {
         }
 
         runTasks(workspace, manifest);
-        if (getenv("conveyor.workspace.preserve") == null) {
+        if (getenv("CONVEYOR_WORKSPACE_PRESERVE") == null) {
             try {
                 log.debug("Deleting workspace {}", workspace);
                 FileUtils.deleteDirectory(workspace);

@@ -6,7 +6,7 @@
 
     <groupId>co.databeast</groupId>
     <artifactId>conveyor</artifactId>
-    <version>0.7-RELEASE</version>
+    <version>0.8-RELEASE</version>
 
     <name>Conveyor</name>
     <description>A library to define pipelines in pure Java</description>
